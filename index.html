@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AETHER</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                        brand: ['Orbitron', 'sans-serif']
+                    },
+                    animation: {
+                        'fade-out': 'fadeOut 1s ease-in-out forwards',
+                        'slide-up': 'slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'draw-line': 'drawLine 2s cubic-bezier(0.4, 0, 0.2, 1) forwards',
+                        'pulse-expand': 'pulseExpand 2s ease-out infinite',
+                        'fade-in': 'fadeIn 0.8s ease-out forwards',
+                        'float': 'float 3s ease-in-out infinite',
+                        'breathe': 'breathe 3s ease-in-out infinite',
+                        'shimmer': 'shimmer 2.5s infinite',
+                        'mic-pulse': 'micPulse 1.5s ease-in-out infinite'
+                    },
+                    keyframes: {
+                        fadeOut: {
+                            '0%': { opacity: '1', visibility: 'visible' },
+                            '90%': { opacity: '0', visibility: 'visible' },
+                            '100%': { opacity: '0', visibility: 'hidden', display: 'none' }
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' }
+                        },
+                        drawLine: { '0%': { strokeDashoffset: '500' }, '100%': { strokeDashoffset: '0' } },
+                        pulseExpand: {
+                            '0%': { transform: 'scale(0.8)', opacity: '0.4' },
+                            '100%': { transform: 'scale(2.5)', opacity: '0' }
+                        },
+                        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+                        float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-8px)' } },
+                        breathe: {
+                            '0%, 100%': { boxShadow: '0 0 0 0 rgba(8,145,178,0.6)' },
+                            '50%': { boxShadow: '0 0 0 15px rgba(8,145,178,0)' }
+                        },
+                        shimmer: { '0%': { backgroundPosition: '-200% 0' }, '100%': { backgroundPosition: '200% 0' } },
+                        micPulse: { '0%, 100%': { transform: 'scale(1)', opacity: '1' }, '50%': { transform: 'scale(1.1)', opacity: '0.8' } }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Orbitron:wght@500;700;900&display=swap');
+        
+        :root {
+            --bg-app: #f8fafc; --card-bg: #ffffff; --card-border: #e2e8f0;
+            --text-primary: #0f172a; --input-bg: #f1f5f9; --input-border: #cbd5e1;
+        }
+        
+        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg-app); color: var(--text-primary); }
+
+        /* ════════════ INTRO ════════════ */
+        #intro-screen {
+            position: fixed; inset: 0; background: linear-gradient(145deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .intro-logo-svg .draw-path { fill: none; stroke: url(#aetherGrad); stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 500; stroke-dashoffset: 500; }
+        .intro-logo-svg .draw-main { stroke-width: 10; animation: drawLine 2s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        .intro-logo-svg .draw-wave { stroke-width: 6; animation: drawLine 1.5s cubic-bezier(0.4, 0, 0.2, 1) 1.2s forwards; }
+        .intro-logo-svg .pulse-ring-1 { animation: pulseExpand 2s ease-out 2s infinite; }
+        .intro-logo-svg .pulse-ring-2 { animation: pulseExpand 2s ease-out 2.5s infinite; }
+        .intro-text { opacity: 0; animation: fadeIn 1s ease-out 2.5s forwards; }
+        .intro-subtitle { opacity: 0; animation: fadeIn 1s ease-out 3s forwards; }
+        @keyframes drawLine { to { strokeDashoffset: 0; } }
+        @keyframes pulseExpand { '0%': { transform: 'scale(0.8)', opacity: '0.4' }, '100%': { transform: 'scale(2.5)', opacity: '0' } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ════════════ APP UI ════════════ */
+        .light-card { background: var(--card-bg); border: 1px solid var(--card-border); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .modern-input { background: var(--input-bg); border: 1px solid var(--input-border); transition: all 0.2s ease; padding-right: 48px; }
+        .modern-input:focus { border-color: #0891b2; background: #fff; box-shadow: 0 0 0 3px rgba(8,145,178,0.15); outline: none; }
+        
+        /* Voice Button */
+        .voice-btn-cool {
+            width: 100%; height: 130px; border-radius: 1.5rem; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; gap: 0.75rem; cursor: pointer; position: relative;
+            overflow: hidden; border: none; color: white; font-weight: 600; letter-spacing: 0.05em;
+            text-transform: uppercase; font-size: 0.95rem;
+            background: linear-gradient(135deg, #0891b2 0%, #0ea5e9 25%, #7c3aed 75%, #8b5cf6 100%);
+            background-size: 200% 200%; animation: shimmer 4s ease-in-out infinite;
+            box-shadow: 0 4px 15px rgba(8,145,178,0.4), 0 8px 25px rgba(124,58,237,0.25), inset 0 1px 0 rgba(255,255,255,0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .voice-btn-cool:hover { transform: translateY(-2px) scale(1.01); box-shadow: 0 8px 25px rgba(8,145,178,0.5), 0 12px 35px rgba(124,58,237,0.35), inset 0 1px 0 rgba(255,255,255,0.25); }
+        .voice-btn-cool:active { transform: translateY(0) scale(0.98); }
+        .voice-btn-cool.listening {
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 50%, #f97316 100%);
+            animation: breathe-red 1.5s ease-in-out infinite;
+            box-shadow: 0 4px 15px rgba(220,38,38,0.5), 0 8px 25px rgba(249,115,22,0.3);
+        }
+        @keyframes breathe-red { '0%, 100%': { box-shadow: 0 0 0 0 rgba(220,38,38,0.6); }, '50%': { box-shadow: 0 0 0 12px rgba(220,38,38,0); } }
+        .voice-btn-cool .mic-icon { font-size: 2.5rem; transition: all 0.3s ease; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
+        .voice-btn-cool.listening .mic-icon { animation: pulse-icon 1s ease-in-out infinite; }
+        @keyframes pulse-icon { '0%, 100%': { transform: scale(1); }, '50%': { transform: scale(1.15); } }
+        .voice-btn-cool .btn-subtitle { font-size: 0.7rem; opacity: 0.85; font-weight: 400; text-transform: none; letter-spacing: 0; }
+
+        /* Small Mic Buttons */
+        .input-mic-btn {
+            position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+            width: 36px; height: 36px; border-radius: 50%;
+            background: linear-gradient(135deg, #0891b2, #7c3aed); color: white;
+            border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; transition: all 0.2s ease; box-shadow: 0 2px 8px rgba(8,145,178,0.3); z-index: 10;
+        }
+        .input-mic-btn:hover { transform: translateY(-50%) scale(1.1); box-shadow: 0 4px 12px rgba(8,145,178,0.5); }
+        .input-mic-btn:active { transform: translateY(-50%) scale(0.95); }
+        .input-mic-btn.listening { background: linear-gradient(135deg, #dc2626, #ef4444); animation: mic-pulse 1.5s ease-in-out infinite; box-shadow: 0 0 0 4px rgba(220,38,38,0.3); }
+        .input-wrapper { position: relative; }
+
+        .pos-card { border-left: 3px solid transparent; transition: all 0.2s; }
+        .pos-card:hover { border-left-color: #0891b2; transform: translateX(2px); }
+        .gradient-text { background: linear-gradient(135deg, #0891b2 0%, #7c3aed 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .img-preview { width: 60px; height: 60px; object-fit: cover; border-radius: 6px; border: 1px solid #e2e8f0; }
+
+        /* ════════════ PRINT STYLES ════════════ */
+        @media print {
+            header, footer, .no-print, section.no-print, button, input, textarea, select, label, #intro-screen { display: none !important; }
+            body { background: white !important; margin: 0 !important; padding: 0 !important; color: #000 !important; }
+            
+            #printForm {
+                display: block !important; position: relative; padding: 15mm;
+                font-family: 'JetBrains Mono', monospace; font-size: 9pt; color: #000; line-height: 1.3;
+            }
+            
+            /* GESAMT-ANZEIGE OBEN RECHTS IM PDF */
+            .print-total-box {
+                position: absolute; top: 15mm; right: 15mm;
+                text-align: right; padding: 8px 12px;
+                border: 2px solid #000; background: #fff;
+                font-family: 'Inter', sans-serif;
+            }
+            .print-total-box .label { font-size: 7pt; text-transform: uppercase; color: #555; display: block; }
+            .print-total-box .value { font-size: 14pt; font-weight: bold; color: #000; }
+            
+            .form-header { border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; text-align: center; margin-top: 40px; }
+            .form-header h1 { font-family: 'Orbitron', sans-serif; font-size: 20pt; letter-spacing: 3px; margin: 0; }
+            .form-header .logo-small { display: block; margin: 0 auto 8px auto; }
+            .form-info-box { border: 1px solid #333; padding: 10px; margin-bottom: 14px; background: #fafafa; }
+            .form-info-box label { font-weight: bold; font-size: 7pt; text-transform: uppercase; color: #555; display: block; }
+            .form-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 8pt; }
+            .form-table th { border: 1px solid #000; background: #f0f0f0; padding: 6px; text-align: left; font-size: 7pt; text-transform: uppercase; }
+            .form-table td { border-bottom: 1px solid #444; border-left: 1px solid #333; border-right: 1px solid #333; padding: 6px; vertical-align: top; }
+            .form-table td:nth-child(2) { border-right: none; }
+            .form-table img { max-width: 60px; max-height: 60px; display: block; margin-top: 4px; border: 1px solid #ccc; }
+            .form-totals { margin-top: 15px; text-align: right; font-size: 9pt; }
+            .form-totals div { display: inline-block; min-width: 180px; border-bottom: 1px dotted #666; margin: 4px 0; }
+            .form-totals .grand-total { border-top: 2px solid #000; border-bottom: none; font-weight: bold; font-size: 11pt; }
+            .form-notes { margin-top: 20px; border: 1px solid #333; padding: 10px; min-height: 40px; background: #fafafa; }
+            .form-notes label { font-weight: bold; font-size: 7pt; text-transform: uppercase; color: #555; display: block; margin-bottom: 4px; }
+            .form-signatures { margin-top: 30px; display: flex; justify-content: space-between; gap: 40px; }
+            .sig-box { flex: 1; border-top: 1px solid #000; padding-top: 6px; text-align: center; font-size: 7pt; color: #555; }
+            .form-footer { margin-top: 30px; text-align: center; font-size: 6pt; color: #777; border-top: 1px solid #666; padding-top: 8px; }
+        }
+        #printForm { display: none; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- ✨ INTRO -->
+    <div id="intro-screen">
+        <div class="animate-float">
+            <svg viewBox="0 0 200 200" class="w-40 h-40 drop-shadow-[0_0_30px_rgba(8,145,178,0.3)] intro-logo-svg">
+                <defs><linearGradient id="aetherGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#0891b2"/><stop offset="100%" stop-color="#7c3aed"/></linearGradient></defs>
+                <path class="draw-path draw-main" d="M40 150 L100 40 L160 150"/>
+                <path class="draw-path draw-wave" d="M65 110 Q80 90 95 110 T125 110"/>
+                <circle cx="100" cy="110" r="4" fill="#0891b2" opacity="0" style="animation: fadeIn 0.5s ease-out 2.8s forwards;"/>
+                <circle cx="100" cy="110" r="10" stroke="#0891b2" stroke-opacity="0.3" fill="none" class="pulse-ring-1"/>
+                <circle cx="100" cy="110" r="18" stroke="#7c3aed" stroke-opacity="0.2" fill="none" class="pulse-ring-2"/>
+            </svg>
+        </div>
+        <div class="intro-text text-center mt-6"><h1 class="font-brand text-5xl font-black tracking-[0.25em] text-white mb-2">AETHER</h1></div>
+    </div>
+
+    <!-- ════════════ HEADER (STATISCH) ════════════ -->
+    <header class="light-card p-4 flex justify-between items-center no-print border-b mx-4 mt-4">
+        <div class="flex items-center gap-3">
+            <div class="w-11 h-11 flex items-center justify-center">
+                <svg viewBox="0 0 200 200" class="w-full h-full">
+                    <defs><linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#0891b2"/><stop offset="100%" stop-color="#7c3aed"/></linearGradient></defs>
+                    <path d="M40 150 L100 40 L160 150" fill="none" stroke="url(#headerGrad)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M65 110 Q80 90 95 110 T125 110" fill="none" stroke="url(#headerGrad)" stroke-width="6" stroke-linecap="round"/>
+                    <circle cx="100" cy="110" r="3.5" fill="#0891b2"/>
+                </svg>
+            </div>
+            <div><h1 class="font-brand font-bold text-xl tracking-[0.15em] gradient-text">AETHER</h1></div>
+        </div>
+        
+        <!-- Statischer Gesamt-Anzeiger (Screen only) + Buttons -->
+        <div class="flex items-center gap-4">
+            <div class="text-right">
+                <p class="text-[10px] text-slate-400 uppercase tracking-wider">Gesamt Netto</p>
+                <p class="text-lg font-bold gradient-text font-brand" id="totalSum">0,00 €</p>
+            </div>
+            <button onclick="exportForERP()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg font-semibold text-xs shadow-sm no-print">📥</button>
+            <button onclick="window.print()" class="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 text-white px-4 py-2 rounded-lg font-semibold text-xs shadow-md no-print">🖨️ PDF</button>
+        </div>
+    </header>
+
+    <!-- ════════════ MAIN CONTENT ════════════ -->
+    <main class="flex-1 overflow-y-auto p-4 space-y-5 no-print">
+
+        <!-- KUNDE & PROJEKT -->
+        <section class="light-card p-4 rounded-2xl">
+            <div class="grid grid-cols-1 gap-3">
+                <div class="input-wrapper">
+                    <input type="text" id="custName" class="modern-input w-full p-3 rounded-xl font-medium" placeholder="Kundenname...">
+                    <button class="input-mic-btn no-print" onclick="startFieldDictation('custName')" title="Per Sprache">🎤</button>
+                </div>
+                <div class="input-wrapper">
+                    <input type="text" id="custAddr" class="modern-input w-full p-3 rounded-xl text-sm" placeholder="Adresse...">
+                    <button class="input-mic-btn no-print" onclick="startFieldDictation('custAddr')" title="Per Sprache">🎤</button>
+                </div>
+                <div class="input-wrapper">
+                    <input type="text" id="projectName" class="modern-input w-full p-3 rounded-xl text-sm" placeholder="Projekt / Baustelle...">
+                    <button class="input-mic-btn no-print" onclick="startFieldDictation('projectName')" title="Per Sprache">🎤</button>
+                </div>
+            </div>
+            <p class="text-xs text-slate-400 mt-2 text-center">💡 Tippe auf 🎤 um direkt in das Feld zu sprechen</p>
+        </section>
+
+        <!-- POSITIONEN SPRACH-EINGABE -->
+        <section>
+            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 ml-1">Positionen per Sprache</label>
+            <button id="micBtn" onclick="toggleSmartDictation()" class="voice-btn-cool">
+                <span id="micIcon" class="mic-icon">🎤</span>
+                <span id="micText">Positionen diktieren</span>
+                <span class="btn-subtitle">z.B. "10 Meter Mauerwerk für 50 Euro"</span>
+            </button>
+        </section>
+
+        <!-- POSITIONSLISTE -->
+        <section>
+            <div class="flex justify-between items-end mb-3">
+                <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-wider ml-1">Positionen <span id="posCount" class="text-cyan-600 ml-1">(0)</span></h2>
+                <button onclick="addEmptyPos()" class="text-xs text-cyan-600 font-semibold hover:text-cyan-700 transition">+ Manuell</button>
+            </div>
+            <div id="posListScreen" class="space-y-3"></div>
+            <div id="emptyState" class="light-card rounded-2xl p-8 text-center border-dashed border-2 border-slate-200">
+                <div class="text-4xl mb-2 opacity-50">📋</div>
+                <p class="text-slate-500 text-sm font-medium">Noch keine Positionen.</p>
+                <p class="text-slate-400 text-xs mt-1">Nutze den großen Button oben oder tippe manuell.</p>
+            </div>
+        </section>
+
+        <!-- NOTIZEN -->
+        <section class="light-card p-4 rounded-2xl border-l-4 border-l-purple-500">
+            <label class="block text-xs font-semibold text-purple-600 uppercase tracking-wider mb-2">📝 Notizen</label>
+            <textarea id="internalNotes" class="w-full bg-transparent border-none outline-none text-sm text-slate-700 resize-none placeholder-slate-400" rows="2" placeholder="Z.B. 'Gültig 30 Tage'..."></textarea>
+        </section>
+        
+    </main>
+
+    <!-- ════════════ DRUCK-FORMULAR ════════════ -->
+    <div id="printForm">
+        <!-- GESAMT-ANZEIGE OBEN RECHTS -->
+        <div class="print-total-box">
+            <span class="label">Gesamt Netto</span>
+            <span class="value" id="printTotalValue">0,00 €</span>
+        </div>
+        
+        <div class="form-header">
+            <svg viewBox="0 0 200 200" class="logo-small w-12 h-12">
+                <defs><linearGradient id="printGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#0891b2"/><stop offset="100%" stop-color="#7c3aed"/></linearGradient></defs>
+                <path d="M40 150 L100 40 L160 150" fill="none" stroke="url(#printGrad)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M65 110 Q80 90 95 110 T125 110" fill="none" stroke="url(#printGrad)" stroke-width="6" stroke-linecap="round"/>
+                <circle cx="100" cy="110" r="3.5" fill="#0891b2"/>
+            </svg>
+            <h1>AETHER</h1>
+            <div class="sub" id="printOfferInfo">Nr. AETH-2026-001 · Datum: 15.04.2026</div>
+        </div>
+        
+        <div class="form-info-box">
+            <label>Auftraggeber / Kunde</label>
+            <div class="value" id="printCustName">_______________________</div>
+            <div class="value" id="printCustAddr" style="margin-top:4px;"></div>
+        </div>
+        <div class="form-info-box">
+            <label>Bauvorhaben / Projekt</label>
+            <div class="value" id="printProject">_______________________</div>
+        </div>
+        
+        <table class="form-table">
+            <thead>
+                <tr>
+                    <th style="width:30px;">Pos</th><th>Leistung / Beschreibung</th>
+                    <th style="width:45px;">Menge</th><th style="width:40px;">Einheit</th>
+                    <th style="width:70px;">Preis</th><th style="width:70px;">Gesamt</th>
+                </tr>
+            </thead>
+            <tbody id="printTableBody"></tbody>
+        </table>
+        
+        <div class="form-totals" id="printTotals">
+            <div>Netto: <strong>0,00 €</strong></div><br>
+            <div>MwSt. (19%): <strong>0,00 €</strong></div><br>
+            <div class="grand-total">Gesamt (Brutto): <strong>0,00 €</strong></div>
+        </div>
+        
+        <div class="form-notes">
+            <label>Bemerkungen</label>
+            <div id="printNotes" style="font-size:8pt; color:#333;"></div>
+        </div>
+        
+        <div class="form-signatures">
+            <div class="sig-box">Auftraggeber<br><span style="color:#999">(Unterschrift)</span></div>
+            <div class="sig-box">Auftragnehmer<br><span style="color:#999">(Stempel)</span></div>
+        </div>
+        
+        <div class="form-footer">AETHER Voice Construction OS · Alle Preise zzgl. MwSt.</div>
+    </div>
+
+    <!-- ════════════ JAVASCRIPT ════════════ -->
+    <script>
+        window.addEventListener('load', () => {
+            const intro = document.getElementById('intro-screen');
+            setTimeout(() => { intro.style.animation = 'fadeOut 0.8s ease-in-out forwards'; setTimeout(() => intro.style.display = 'none', 800); }, 3500);
+        });
+
+        let positions = [], recognition = null, isListening = false, currentField = null;
+        const offerNr = 'AETH-' + new Date().getFullYear() + '-' + String(Math.floor(Math.random() * 9000) + 1000);
+
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.lang = 'de-DE'; recognition.continuous = false; recognition.interimResults = false;
+            recognition.onstart = () => {
+                isListening = true;
+                const btn = document.getElementById('micBtn');
+                if (btn) { btn.classList.add('listening'); document.getElementById('micIcon').innerText = '⏹'; document.getElementById('micText').innerText = currentField ? 'Höre zu...' : 'Positionen hören...'; }
+                if (currentField) { const fbtn = document.querySelector(`button[onclick="startFieldDictation('${currentField}')"]`); if (fbtn) fbtn.classList.add('listening'); }
+            };
+            recognition.onend = () => {
+                isListening = false; currentField = null;
+                const btn = document.getElementById('micBtn');
+                if (btn) { btn.classList.remove('listening'); document.getElementById('micIcon').innerText = '🎤'; document.getElementById('micText').innerText = 'Positionen diktieren'; }
+                document.querySelectorAll('.input-mic-btn').forEach(b => b.classList.remove('listening'));
+            };
+            recognition.onresult = (e) => {
+                const t = e.results[0][0].transcript;
+                if (currentField) { document.getElementById(currentField).value = t; autoSave(); }
+                else parseSmartInput(t);
+            };
+            recognition.onerror = (e) => {
+                console.error('Speech error:', e.error);
+                if (currentField) { const b = document.querySelector(`button[onclick="startFieldDictation('${currentField}')"]`); if (b) { b.classList.remove('listening'); b.innerHTML = '⚠️'; setTimeout(() => b.innerHTML = '🎤', 2000); } }
+            };
+        }
+
+        function toggleSmartDictation() { if (!recognition) return alert("Browser unterstützt keine Spracherkennung (Chrome/Safari empfohlen)."); currentField = null; if (isListening) recognition.stop(); else recognition.start(); }
+        function startFieldDictation(fid) { if (!recognition) return alert("Browser unterstützt keine Spracherkennung (Chrome/Safari empfohlen)."); if (isListening) { recognition.stop(); return; } currentField = fid; recognition.start(); }
+
+        function parseSmartInput(text) {
+            const lower = text.toLowerCase(), numbers = text.match(/(\d+[.,]?\d*)/g);
+            let qty = 1, price = 0, unit = 'Std';
+            if (lower.match(/meter|m\b|laufende?/)) unit = 'm';
+            else if (lower.match(/quadrat|m²|qm|fläche/)) unit = 'm²';
+            else if (lower.match(/stück|stk|st/)) unit = 'Stk';
+            else if (lower.match(/stunde|h\b|std/)) unit = 'Std';
+            else if (lower.match(/pauschal|komplett/)) unit = 'psch';
+            if (numbers) {
+                const vals = numbers.map(n => parseFloat(n.replace(',', '.')));
+                if (lower.match(/euro|€|kostet|für\s+\d/)) { price = vals[vals.length - 1]; if (vals.length >= 2) qty = vals[0]; }
+                else { qty = vals[0]; if (vals.length >= 2) price = vals[1]; }
+            }
+            let desc = text.replace(/\d+[.,]?\d*\s*(euro|€|meter|m²|stk|std|h|m|quadrat)/gi, '').replace(/\s+/g, ' ').trim();
+            if (!desc || desc.length < 3) desc = `[Pos ${positions.length + 1}] ${text}`;
+            addPosition({ desc, qty, unit, price });
+        }
+
+        function addPosition(data) { const id = Date.now() + Math.random(); if (!data.image) data.image = null; positions.push({ id, ...data }); render(); autoSave(); }
+        function addEmptyPos() { addPosition({ desc: '', qty: 1, unit: 'Std', price: 0 }); setTimeout(() => { const inputs = document.querySelectorAll('#posListScreen input[type="text"]'); if (inputs.length) inputs[inputs.length-1].focus(); }, 100); }
+        function removePos(id) { if(confirm('Löschen?')) { positions = positions.filter(p => p.id !== id); render(); autoSave(); } }
+        function updatePos(id, field, value) { const p = positions.find(x => x.id === id); if (p) { p[field] = field === 'qty' || field === 'price' ? (parseFloat(value) || 0) : value; calcTotal(); autoSave(); } }
+
+        function handleImageUpload(id, event) {
+            const file = event.target.files[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas'), MAX = 800;
+                    let w = img.width, h = img.height;
+                    if (w > h && w > MAX) { h *= MAX/w; w = MAX; } else if (h > MAX) { w *= MAX/h; h = MAX; }
+                    canvas.width = w; canvas.height = h;
+                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                    const compressed = canvas.toDataURL('image/jpeg', 0.7);
+                    const p = positions.find(x => x.id === id);
+                    if (p) { p.image = compressed; render(); autoSave(); }
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+        function removeImage(id) { const p = positions.find(x => x.id === id); if (p) { p.image = null; render(); autoSave(); } }
+
+        function calcTotal() {
+            const sum = positions.reduce((acc, curr) => acc + (curr.qty * curr.price), 0);
+            const formatted = sum.toLocaleString('de-DE', { minimumFractionDigits: 2 }) + ' €';
+            document.getElementById('totalSum').innerText = formatted;
+            document.getElementById('printTotalValue').innerText = formatted;
+            document.getElementById('posCount').innerText = `(${positions.length})`;
+            return sum;
+        }
+
+        function render() {
+            const list = document.getElementById('posListScreen'), empty = document.getElementById('emptyState');
+            if (positions.length === 0) { list.innerHTML = ''; empty.style.display = 'block'; }
+            else {
+                empty.style.display = 'none';
+                list.innerHTML = positions.map((p, index) => `
+                    <div class="pos-card light-card p-3 rounded-xl">
+                        <div class="flex gap-2 items-start">
+                            <span class="text-xs font-bold text-slate-400 mt-2.5 w-5 text-right">${index + 1}.</span>
+                            <div class="flex-1 min-w-0">
+                                <input type="text" class="modern-input w-full rounded-lg p-2 text-sm font-medium outline-none mb-2" value="${p.desc}" oninput="updatePos(${p.id}, 'desc', this.value)" placeholder="Beschreibung...">
+                                ${p.image ? `<div class="flex items-center gap-2 mb-2"><img src="${p.image}" class="img-preview" alt="Foto"><button onclick="removeImage(${p.id})" class="text-xs text-red-500 hover:underline no-print">✕</button></div>` : ''}
+                            </div>
+                            <label class="cursor-pointer bg-slate-100 text-slate-600 p-2 rounded-lg flex items-center justify-center w-10 h-10 no-print hover:bg-slate-200 transition" title="Foto">📷<input type="file" accept="image/*" class="hidden" onchange="handleImageUpload(${p.id}, event)"></label>
+                            <button onclick="removePos(${p.id})" class="text-slate-400 hover:text-red-500 px-2 text-xl transition no-print">×</button>
+                        </div>
+                        <div class="flex gap-2 items-center pl-7 mt-1">
+                            <input type="number" step="0.01" class="w-16 modern-input rounded-lg p-1.5 text-center text-xs outline-none" value="${p.qty}" oninput="updatePos(${p.id}, 'qty', this.value)">
+                            <input type="text" class="w-14 modern-input rounded-lg p-1.5 text-center text-xs outline-none uppercase" value="${p.unit}" oninput="updatePos(${p.id}, 'unit', this.value.toUpperCase())">
+                            <span class="text-slate-400 text-xs">×</span>
+                            <input type="number" step="0.01" class="flex-1 modern-input rounded-lg p-1.5 text-right text-xs font-semibold text-cyan-700 outline-none" value="${p.price}" oninput="updatePos(${p.id}, 'price', this.value)">
+                            <span class="text-slate-500 text-xs">€</span>
+                            <span class="text-sm font-bold text-slate-800 min-w-[70px] text-right">${(p.qty * p.price).toLocaleString('de-DE', {minimumFractionDigits: 2})} €</span>
+                        </div>
+                    </div>`).join('');
+            }
+            calcTotal();
+        }
+
+        function exportForERP() {
+            if(positions.length === 0) return alert("Keine Daten.");
+            const cust = document.getElementById('custName').value || 'Kunde';
+            let csv = "\uFEFFAngebotsNr;Kunde;Datum\n";
+            csv += `${offerNr};${cust};${new Date().toLocaleDateString('de-DE')}\n\nPos;Beschreibung;Menge;Einheit;Preis;Gesamt\n`;
+            positions.forEach((p, i) => { csv += `${i+1};"${(p.desc||'').replace(/"/g,'""')}";${p.qty};${p.unit};${p.price.toFixed(2).replace('.',',')};${(p.qty*p.price).toFixed(2).replace('.',',')}\n`; });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' }), link = document.createElement("a");
+            link.href = URL.createObjectURL(blob); link.download = `AETHER_${offerNr}.csv`; link.click();
+        }
+
+        function preparePrint() {
+            document.getElementById('printOfferInfo').innerText = `Nr. ${offerNr} · Datum: ${new Date().toLocaleDateString('de-DE')}`;
+            document.getElementById('printCustName').innerText = document.getElementById('custName').value || '_______________________';
+            document.getElementById('printCustAddr').innerText = document.getElementById('custAddr').value || '';
+            document.getElementById('printProject').innerText = document.getElementById('projectName').value || '_______________________';
+            document.getElementById('printNotes').innerText = document.getElementById('internalNotes').value || '';
+            
+            const tbody = document.getElementById('printTableBody'); let html = '';
+            positions.forEach((p, i) => {
+                const imgHtml = p.image ? `<br><img src="${p.image}">` : '';
+                html += `<tr><td style="text-align:center;">${i+1}</td><td>${p.desc || '-'}${imgHtml}</td><td style="text-align:right;">${p.qty}</td><td style="text-align:right;">${p.unit}</td><td style="text-align:right;">${p.price.toFixed(2).replace('.',',')} €</td><td style="text-align:right; font-weight:bold;">${(p.qty*p.price).toFixed(2).replace('.',',')} €</td></tr>`;
+            });
+            for (let j = positions.length; j < 8; j++) html += `<tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>`;
+            tbody.innerHTML = html;
+            
+            const netto = calcTotal();
+            document.getElementById('printTotals').innerHTML = `<div>Netto: <strong>${netto.toFixed(2).replace('.',',')} €</strong></div><br><div>MwSt. (19%): <strong>${(netto*0.19).toFixed(2).replace('.',',')} €</strong></div><br><div class="grand-total">Gesamt (Brutto): <strong>${(netto*1.19).toFixed(2).replace('.',',')} €</strong></div>`;
+        }
+
+        window.onbeforeprint = preparePrint;
+        const origPrint = window.print;
+        window.print = function() { preparePrint(); origPrint.call(window); };
+
+        function autoSave() { try { localStorage.setItem('aether_final_v7', JSON.stringify({ cust: document.getElementById('custName').value, addr: document.getElementById('custAddr').value, proj: document.getElementById('projectName').value, notes: document.getElementById('internalNotes').value, pos: positions })); } catch(e) {} }
+        
+        window.onload = () => {
+            const saved = localStorage.getItem('aether_final_v7');
+            if(saved) { try { const d = JSON.parse(saved); document.getElementById('custName').value = d.cust || ''; document.getElementById('custAddr').value = d.addr || ''; document.getElementById('projectName').value = d.proj || ''; document.getElementById('internalNotes').value = d.notes || ''; if(d.pos && Array.isArray(d.pos)) positions = d.pos; render(); } catch(e) {} }
+        };
+        ['custName','custAddr','projectName','internalNotes'].forEach(id => document.getElementById(id).addEventListener('input', autoSave));
+    </script>
+</body>
+</html>

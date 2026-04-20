@@ -21,33 +21,18 @@
                         'pulse-expand': 'pulseExpand 2s ease-out infinite',
                         'fade-in': 'fadeIn 0.8s ease-out forwards',
                         'float': 'float 3s ease-in-out infinite',
-                        'breathe': 'breathe 3s ease-in-out infinite',
-                        'shimmer': 'shimmer 2.5s infinite',
-                        'mic-pulse': 'micPulse 1.5s ease-in-out infinite'
+                        'wave-idle': 'waveIdle 2s ease-in-out infinite',
+                        'wave-active': 'waveActive 1s ease-in-out infinite'
                     },
                     keyframes: {
-                        fadeOut: {
-                            '0%': { opacity: '1', visibility: 'visible' },
-                            '90%': { opacity: '0', visibility: 'visible' },
-                            '100%': { opacity: '0', visibility: 'hidden', display: 'none' }
-                        },
-                        slideUp: {
-                            '0%': { transform: 'translateY(20px)', opacity: '0' },
-                            '100%': { transform: 'translateY(0)', opacity: '1' }
-                        },
+                        fadeOut: { '0%': { opacity: '1', visibility: 'visible' }, '90%': { opacity: '0', visibility: 'visible' }, '100%': { opacity: '0', visibility: 'hidden', display: 'none' } },
+                        slideUp: { '0%': { transform: 'translateY(20px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
                         drawLine: { '0%': { strokeDashoffset: '500' }, '100%': { strokeDashoffset: '0' } },
-                        pulseExpand: {
-                            '0%': { transform: 'scale(0.8)', opacity: '0.4' },
-                            '100%': { transform: 'scale(2.5)', opacity: '0' }
-                        },
+                        pulseExpand: { '0%': { transform: 'scale(0.8)', opacity: '0.3' }, '100%': { transform: 'scale(2.5)', opacity: '0' } },
                         fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
-                        float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-8px)' } },
-                        breathe: {
-                            '0%, 100%': { boxShadow: '0 0 0 0 rgba(8,145,178,0.6)' },
-                            '50%': { boxShadow: '0 0 0 15px rgba(8,145,178,0)' }
-                        },
-                        shimmer: { '0%': { backgroundPosition: '-200% 0' }, '100%': { backgroundPosition: '200% 0' } },
-                        micPulse: { '0%, 100%': { transform: 'scale(1)', opacity: '1' }, '50%': { transform: 'scale(1.1)', opacity: '0.8' } }
+                        float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-6px)' } },
+                        waveIdle: { '0%, 100%': { scaleY: 0.5, opacity: 0.5 }, '50%': { scaleY: 1, opacity: 1 } },
+                        waveActive: { '0%, 100%': { scaleY: 0.8 }, '50%': { scaleY: 1.5 } }
                     }
                 }
             }
@@ -57,95 +42,122 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Orbitron:wght@500;700;900&display=swap');
         
         :root {
-            --bg-app: #f8fafc; --card-bg: #ffffff; --card-border: #e2e8f0;
-            --text-primary: #0f172a; --input-bg: #f1f5f9; --input-border: #cbd5e1;
+            --bg-app: #000000; --bg-card: #111111; --bg-input: #1a1a1a;
+            --border: #333333; --text-primary: #ffffff; --text-secondary: #a1a1aa;
+            --text-muted: #71717a; --accent: #ffffff;
         }
         
-        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg-app); color: var(--text-primary); }
+        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg-app); color: var(--text-primary); -webkit-font-smoothing: antialiased; }
 
         /* ════════════ INTRO ════════════ */
-        #intro-screen {
-            position: fixed; inset: 0; background: linear-gradient(145deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-            z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center;
-        }
-        .intro-logo-svg .draw-path { fill: none; stroke: url(#aetherGrad); stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 500; stroke-dashoffset: 500; }
+        #intro-screen { position: fixed; inset: 0; background: #000000; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .intro-logo-svg .draw-path { fill: none; stroke: #ffffff; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 500; stroke-dashoffset: 500; }
         .intro-logo-svg .draw-main { stroke-width: 10; animation: drawLine 2s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
         .intro-logo-svg .draw-wave { stroke-width: 6; animation: drawLine 1.5s cubic-bezier(0.4, 0, 0.2, 1) 1.2s forwards; }
-        .intro-logo-svg .pulse-ring-1 { animation: pulseExpand 2s ease-out 2s infinite; }
-        .intro-logo-svg .pulse-ring-2 { animation: pulseExpand 2s ease-out 2.5s infinite; }
+        .intro-logo-svg .pulse-ring-1 { animation: pulseExpand 2s ease-out 2s infinite; stroke: rgba(255,255,255,0.3); }
+        .intro-logo-svg .pulse-ring-2 { animation: pulseExpand 2s ease-out 2.5s infinite; stroke: rgba(255,255,255,0.15); }
         .intro-text { opacity: 0; animation: fadeIn 1s ease-out 2.5s forwards; }
-        .intro-subtitle { opacity: 0; animation: fadeIn 1s ease-out 3s forwards; }
         @keyframes drawLine { to { strokeDashoffset: 0; } }
-        @keyframes pulseExpand { '0%': { transform: 'scale(0.8)', opacity: '0.4' }, '100%': { transform: 'scale(2.5)', opacity: '0' } }
+        @keyframes pulseExpand { '0%': { transform: 'scale(0.8)', opacity: '0.3' }, '100%': { transform: 'scale(2.5)', opacity: '0' } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* ════════════ APP UI ════════════ */
-        .light-card { background: var(--card-bg); border: 1px solid var(--card-border); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .modern-input { background: var(--input-bg); border: 1px solid var(--input-border); transition: all 0.2s ease; padding-right: 48px; }
-        .modern-input:focus { border-color: #0891b2; background: #fff; box-shadow: 0 0 0 3px rgba(8,145,178,0.15); outline: none; }
+        .light-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; }
+        .modern-input { background: var(--bg-input); border: 1px solid var(--border); color: var(--text-primary); transition: all 0.2s ease; padding-right: 48px; }
+        .modern-input::placeholder { color: var(--text-muted); }
+        .modern-input:focus { border-color: var(--accent); background: #222; outline: none; box-shadow: 0 0 0 2px rgba(255,255,255,0.1); }
         
-        /* Voice Button */
-        .voice-btn-cool {
-            width: 100%; height: 130px; border-radius: 1.5rem; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; gap: 0.75rem; cursor: pointer; position: relative;
-            overflow: hidden; border: none; color: white; font-weight: 600; letter-spacing: 0.05em;
-            text-transform: uppercase; font-size: 0.95rem;
-            background: linear-gradient(135deg, #0891b2 0%, #0ea5e9 25%, #7c3aed 75%, #8b5cf6 100%);
-            background-size: 200% 200%; animation: shimmer 4s ease-in-out infinite;
-            box-shadow: 0 4px 15px rgba(8,145,178,0.4), 0 8px 25px rgba(124,58,237,0.25), inset 0 1px 0 rgba(255,255,255,0.2);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        /* ════════════ WAVEFORM BUTTON ════════════ */
+        .wave-container {
+            width: 100%; height: 140px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            cursor: pointer; position: relative;
+            overflow: hidden; transition: all 0.3s ease;
         }
-        .voice-btn-cool:hover { transform: translateY(-2px) scale(1.01); box-shadow: 0 8px 25px rgba(8,145,178,0.5), 0 12px 35px rgba(124,58,237,0.35), inset 0 1px 0 rgba(255,255,255,0.25); }
-        .voice-btn-cool:active { transform: translateY(0) scale(0.98); }
-        .voice-btn-cool.listening {
-            background: linear-gradient(135deg, #dc2626 0%, #ef4444 50%, #f97316 100%);
-            animation: breathe-red 1.5s ease-in-out infinite;
-            box-shadow: 0 4px 15px rgba(220,38,38,0.5), 0 8px 25px rgba(249,115,22,0.3);
+        .wave-container:hover { border-color: rgba(255,255,255,0.3); background: #161616; }
+        
+        .wave-bars {
+            display: flex; align-items: center; gap: 4px; height: 40px;
         }
-        @keyframes breathe-red { '0%, 100%': { box-shadow: 0 0 0 0 rgba(220,38,38,0.6); }, '50%': { box-shadow: 0 0 0 12px rgba(220,38,38,0); } }
-        .voice-btn-cool .mic-icon { font-size: 2.5rem; transition: all 0.3s ease; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
-        .voice-btn-cool.listening .mic-icon { animation: pulse-icon 1s ease-in-out infinite; }
-        @keyframes pulse-icon { '0%, 100%': { transform: scale(1); }, '50%': { transform: scale(1.15); } }
-        .voice-btn-cool .btn-subtitle { font-size: 0.7rem; opacity: 0.85; font-weight: 400; text-transform: none; letter-spacing: 0; }
+        
+        .wave-bar {
+            width: 4px; background: var(--accent); border-radius: 2px;
+            height: 10px; opacity: 0.5;
+            transition: height 0.2s ease, opacity 0.2s ease;
+        }
+        
+        /* Idle Animation */
+        .wave-container:not(.listening) .wave-bar:nth-child(odd) { animation: waveIdle 1.5s ease-in-out infinite; }
+        .wave-container:not(.listening) .wave-bar:nth-child(even) { animation: waveIdle 1.5s ease-in-out infinite reverse; }
+        
+        /* Delays for natural look */
+        .wave-bar:nth-child(1) { animation-delay: 0s; }
+        .wave-bar:nth-child(2) { animation-delay: 0.1s; }
+        .wave-bar:nth-child(3) { animation-delay: 0.2s; }
+        .wave-bar:nth-child(4) { animation-delay: 0.3s; }
+        .wave-bar:nth-child(5) { animation-delay: 0.4s; }
+        .wave-bar:nth-child(6) { animation-delay: 0.3s; }
+        .wave-bar:nth-child(7) { animation-delay: 0.2s; }
+        .wave-bar:nth-child(8) { animation-delay: 0.1s; }
+        .wave-bar:nth-child(9) { animation-delay: 0s; }
 
-        /* Small Mic Buttons */
+        /* Listening State */
+        .wave-container.listening {
+            border-color: var(--accent);
+            box-shadow: 0 0 20px rgba(255,255,255,0.1);
+        }
+        .wave-container.listening .wave-bar {
+            opacity: 1;
+            animation: waveActive 0.8s ease-in-out infinite !important;
+        }
+        .wave-container.listening .wave-bar:nth-child(1) { animation-delay: 0s !important; }
+        .wave-container.listening .wave-bar:nth-child(2) { animation-delay: 0.1s !important; }
+        .wave-container.listening .wave-bar:nth-child(3) { animation-delay: 0.2s !important; }
+        .wave-container.listening .wave-bar:nth-child(4) { animation-delay: 0.3s !important; }
+        .wave-container.listening .wave-bar:nth-child(5) { animation-delay: 0.4s !important; }
+        .wave-container.listening .wave-bar:nth-child(6) { animation-delay: 0.3s !important; }
+        .wave-container.listening .wave-bar:nth-child(7) { animation-delay: 0.2s !important; }
+        .wave-container.listening .wave-bar:nth-child(8) { animation-delay: 0.1s !important; }
+        .wave-container.listening .wave-bar:nth-child(9) { animation-delay: 0s !important; }
+
+        .wave-text {
+            margin-top: 12px; font-size: 0.8rem; color: var(--text-secondary);
+            text-transform: uppercase; letter-spacing: 0.1em; font-weight: 500;
+            transition: color 0.3s;
+        }
+        .wave-container.listening .wave-text { color: var(--accent); }
+
+        /* Small Mic Buttons – Minimal */
         .input-mic-btn {
             position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
             width: 36px; height: 36px; border-radius: 50%;
-            background: linear-gradient(135deg, #0891b2, #7c3aed); color: white;
+            background: var(--accent); color: #000;
             border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
-            font-size: 1rem; transition: all 0.2s ease; box-shadow: 0 2px 8px rgba(8,145,178,0.3); z-index: 10;
+            font-size: 1rem; transition: all 0.2s ease; z-index: 10;
         }
-        .input-mic-btn:hover { transform: translateY(-50%) scale(1.1); box-shadow: 0 4px 12px rgba(8,145,178,0.5); }
+        .input-mic-btn:hover { transform: translateY(-50%) scale(1.05); opacity: 0.9; }
         .input-mic-btn:active { transform: translateY(-50%) scale(0.95); }
-        .input-mic-btn.listening { background: linear-gradient(135deg, #dc2626, #ef4444); animation: mic-pulse 1.5s ease-in-out infinite; box-shadow: 0 0 0 4px rgba(220,38,38,0.3); }
+        .input-mic-btn.listening { background: #fff; animation: mic-pulse 1.5s ease-in-out infinite; }
+        @keyframes mic-pulse { '0%, 100%': { opacity: 1; }, '50%': { opacity: 0.7; } }
         .input-wrapper { position: relative; }
 
-        .pos-card { border-left: 3px solid transparent; transition: all 0.2s; }
-        .pos-card:hover { border-left-color: #0891b2; transform: translateX(2px); }
-        .gradient-text { background: linear-gradient(135deg, #0891b2 0%, #7c3aed 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .img-preview { width: 60px; height: 60px; object-fit: cover; border-radius: 6px; border: 1px solid #e2e8f0; }
+        .pos-card { border-left: 2px solid transparent; transition: all 0.2s; }
+        .pos-card:hover { border-left-color: var(--accent); }
+        .gradient-text { color: var(--accent); }
+        .img-preview { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); }
 
         /* ════════════ PRINT STYLES ════════════ */
         @media print {
-            header, footer, .no-print, section.no-print, button, input, textarea, select, label, #intro-screen { display: none !important; }
+            header, footer, .no-print, section.no-print, button, input, textarea, select, label, #intro-screen, .wave-container { display: none !important; }
             body { background: white !important; margin: 0 !important; padding: 0 !important; color: #000 !important; }
-            
-            #printForm {
-                display: block !important; position: relative; padding: 15mm;
-                font-family: 'JetBrains Mono', monospace; font-size: 9pt; color: #000; line-height: 1.3;
-            }
-            
-            /* GESAMT-ANZEIGE OBEN RECHTS IM PDF */
-            .print-total-box {
-                position: absolute; top: 15mm; right: 15mm;
-                text-align: right; padding: 8px 12px;
-                border: 2px solid #000; background: #fff;
-                font-family: 'Inter', sans-serif;
-            }
+            #printForm { display: block !important; position: relative; padding: 15mm; font-family: 'JetBrains Mono', monospace; font-size: 9pt; color: #000; line-height: 1.3; }
+            .print-total-box { position: absolute; top: 15mm; right: 15mm; text-align: right; padding: 8px 12px; border: 2px solid #000; background: #fff; font-family: 'Inter', sans-serif; }
             .print-total-box .label { font-size: 7pt; text-transform: uppercase; color: #555; display: block; }
             .print-total-box .value { font-size: 14pt; font-weight: bold; color: #000; }
-            
             .form-header { border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; text-align: center; margin-top: 40px; }
             .form-header h1 { font-family: 'Orbitron', sans-serif; font-size: 20pt; letter-spacing: 3px; margin: 0; }
             .form-header .logo-small { display: block; margin: 0 auto 8px auto; }
@@ -173,116 +185,114 @@
     <!-- ✨ INTRO -->
     <div id="intro-screen">
         <div class="animate-float">
-            <svg viewBox="0 0 200 200" class="w-40 h-40 drop-shadow-[0_0_30px_rgba(8,145,178,0.3)] intro-logo-svg">
-                <defs><linearGradient id="aetherGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#0891b2"/><stop offset="100%" stop-color="#7c3aed"/></linearGradient></defs>
+            <svg viewBox="0 0 200 200" class="w-40 h-40 intro-logo-svg">
                 <path class="draw-path draw-main" d="M40 150 L100 40 L160 150"/>
                 <path class="draw-path draw-wave" d="M65 110 Q80 90 95 110 T125 110"/>
-                <circle cx="100" cy="110" r="4" fill="#0891b2" opacity="0" style="animation: fadeIn 0.5s ease-out 2.8s forwards;"/>
-                <circle cx="100" cy="110" r="10" stroke="#0891b2" stroke-opacity="0.3" fill="none" class="pulse-ring-1"/>
-                <circle cx="100" cy="110" r="18" stroke="#7c3aed" stroke-opacity="0.2" fill="none" class="pulse-ring-2"/>
+                <circle cx="100" cy="110" r="4" fill="#fff" opacity="0" style="animation: fadeIn 0.5s ease-out 2.8s forwards;"/>
+                <circle cx="100" cy="110" r="10" stroke="rgba(255,255,255,0.3)" fill="none" class="pulse-ring-1"/>
+                <circle cx="100" cy="110" r="18" stroke="rgba(255,255,255,0.15)" fill="none" class="pulse-ring-2"/>
             </svg>
         </div>
-        <div class="intro-text text-center mt-6"><h1 class="font-brand text-5xl font-black tracking-[0.25em] text-white mb-2">AETHER</h1></div>
+        <div class="intro-text text-center mt-6">
+            <h1 class="font-brand text-5xl font-black tracking-[0.25em] text-white mb-1">AETHER</h1>
+            <p class="text-white/40 text-xs uppercase tracking-[0.4em]">Voice OS</p>
+        </div>
     </div>
 
-    <!-- ════════════ HEADER (STATISCH) ════════════ -->
+    <!-- ════════════ HEADER ════════════ -->
     <header class="light-card p-4 flex justify-between items-center no-print border-b mx-4 mt-4">
         <div class="flex items-center gap-3">
-            <div class="w-11 h-11 flex items-center justify-center">
+            <div class="w-10 h-10 flex items-center justify-center">
                 <svg viewBox="0 0 200 200" class="w-full h-full">
-                    <defs><linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#0891b2"/><stop offset="100%" stop-color="#7c3aed"/></linearGradient></defs>
-                    <path d="M40 150 L100 40 L160 150" fill="none" stroke="url(#headerGrad)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M65 110 Q80 90 95 110 T125 110" fill="none" stroke="url(#headerGrad)" stroke-width="6" stroke-linecap="round"/>
-                    <circle cx="100" cy="110" r="3.5" fill="#0891b2"/>
+                    <path d="M40 150 L100 40 L160 150" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M65 110 Q80 90 95 110 T125 110" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
+                    <circle cx="100" cy="110" r="3.5" fill="#fff"/>
                 </svg>
             </div>
-            <div><h1 class="font-brand font-bold text-xl tracking-[0.15em] gradient-text">AETHER</h1></div>
+            <h1 class="font-brand font-bold text-lg tracking-[0.15em] text-white">AETHER</h1>
         </div>
-        
-        <!-- Statischer Gesamt-Anzeiger (Screen only) + Buttons -->
         <div class="flex items-center gap-4">
             <div class="text-right">
-                <p class="text-[10px] text-slate-400 uppercase tracking-wider">Gesamt Netto</p>
-                <p class="text-lg font-bold gradient-text font-brand" id="totalSum">0,00 €</p>
+                <p class="text-[10px] text-white/40 uppercase tracking-wider">Gesamt</p>
+                <p class="text-lg font-bold text-white font-brand" id="totalSum">0,00 €</p>
             </div>
-            <button onclick="exportForERP()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg font-semibold text-xs shadow-sm no-print">📥</button>
-            <button onclick="window.print()" class="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 text-white px-4 py-2 rounded-lg font-semibold text-xs shadow-md no-print">🖨️ PDF</button>
+            <button onclick="exportForERP()" class="bg-white text-black px-3 py-2 rounded-lg font-semibold text-xs no-print hover:bg-white/90 transition">📥</button>
+            <button onclick="window.print()" class="bg-white text-black px-4 py-2 rounded-lg font-semibold text-xs no-print hover:bg-white/90 transition">🖨️</button>
         </div>
     </header>
 
-    <!-- ════════════ MAIN CONTENT ════════════ -->
-    <main class="flex-1 overflow-y-auto p-4 space-y-5 no-print">
+    <!-- ════════════ MAIN ════════════ -->
+    <main class="flex-1 overflow-y-auto p-4 space-y-4 no-print">
 
         <!-- KUNDE & PROJEKT -->
         <section class="light-card p-4 rounded-2xl">
             <div class="grid grid-cols-1 gap-3">
                 <div class="input-wrapper">
-                    <input type="text" id="custName" class="modern-input w-full p-3 rounded-xl font-medium" placeholder="Kundenname...">
-                    <button class="input-mic-btn no-print" onclick="startFieldDictation('custName')" title="Per Sprache">🎤</button>
+                    <input type="text" id="custName" class="modern-input w-full p-3 rounded-xl font-medium" placeholder="Kundenname">
+                    <button class="input-mic-btn no-print" onclick="startFieldDictation('custName')" title="Sprache">🎤</button>
                 </div>
                 <div class="input-wrapper">
-                    <input type="text" id="custAddr" class="modern-input w-full p-3 rounded-xl text-sm" placeholder="Adresse...">
-                    <button class="input-mic-btn no-print" onclick="startFieldDictation('custAddr')" title="Per Sprache">🎤</button>
+                    <input type="text" id="custAddr" class="modern-input w-full p-3 rounded-xl text-sm" placeholder="Adresse">
+                    <button class="input-mic-btn no-print" onclick="startFieldDictation('custAddr')" title="Sprache">🎤</button>
                 </div>
                 <div class="input-wrapper">
-                    <input type="text" id="projectName" class="modern-input w-full p-3 rounded-xl text-sm" placeholder="Projekt / Baustelle...">
-                    <button class="input-mic-btn no-print" onclick="startFieldDictation('projectName')" title="Per Sprache">🎤</button>
+                    <input type="text" id="projectName" class="modern-input w-full p-3 rounded-xl text-sm" placeholder="Projekt">
+                    <button class="input-mic-btn no-print" onclick="startFieldDictation('projectName')" title="Sprache">🎤</button>
                 </div>
             </div>
-            <p class="text-xs text-slate-400 mt-2 text-center">💡 Tippe auf 🎤 um direkt in das Feld zu sprechen</p>
         </section>
 
-        <!-- POSITIONEN SPRACH-EINGABE -->
+        <!-- POSITIONEN SPRACH-EINGABE (WAVEFORM) -->
         <section>
-            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 ml-1">Positionen per Sprache</label>
-            <button id="micBtn" onclick="toggleSmartDictation()" class="voice-btn-cool">
-                <span id="micIcon" class="mic-icon">🎤</span>
-                <span id="micText">Positionen diktieren</span>
-                <span class="btn-subtitle">z.B. "10 Meter Mauerwerk für 50 Euro"</span>
-            </button>
+            <div id="waveBtn" class="wave-container" onclick="toggleSmartDictation()">
+                <div class="wave-bars">
+                    <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+                    <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+                    <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+                </div>
+                <div class="wave-text" id="waveText">Tippen zum Sprechen</div>
+            </div>
         </section>
 
         <!-- POSITIONSLISTE -->
         <section>
             <div class="flex justify-between items-end mb-3">
-                <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-wider ml-1">Positionen <span id="posCount" class="text-cyan-600 ml-1">(0)</span></h2>
-                <button onclick="addEmptyPos()" class="text-xs text-cyan-600 font-semibold hover:text-cyan-700 transition">+ Manuell</button>
+                <h2 class="text-xs font-semibold text-white/40 uppercase tracking-wider ml-1">Positionen <span id="posCount" class="text-white ml-1">(0)</span></h2>
+                <button onclick="addEmptyPos()" class="text-xs text-white font-semibold hover:text-white/80 transition">+ Manuell</button>
             </div>
             <div id="posListScreen" class="space-y-3"></div>
-            <div id="emptyState" class="light-card rounded-2xl p-8 text-center border-dashed border-2 border-slate-200">
-                <div class="text-4xl mb-2 opacity-50">📋</div>
-                <p class="text-slate-500 text-sm font-medium">Noch keine Positionen.</p>
-                <p class="text-slate-400 text-xs mt-1">Nutze den großen Button oben oder tippe manuell.</p>
+            <div id="emptyState" class="light-card rounded-2xl p-8 text-center border border-dashed">
+                <p class="text-white/40 text-sm">Noch keine Positionen.</p>
+                <p class="text-white/30 text-xs mt-1">Nutze die Wellen oben oder tippe manuell.</p>
             </div>
         </section>
 
-        <!-- NOTIZEN -->
-        <section class="light-card p-4 rounded-2xl border-l-4 border-l-purple-500">
-            <label class="block text-xs font-semibold text-purple-600 uppercase tracking-wider mb-2">📝 Notizen</label>
-            <textarea id="internalNotes" class="w-full bg-transparent border-none outline-none text-sm text-slate-700 resize-none placeholder-slate-400" rows="2" placeholder="Z.B. 'Gültig 30 Tage'..."></textarea>
+        <!-- NOTIZEN MIT SPRACHE -->
+        <section class="light-card p-4 rounded-2xl">
+            <div class="input-wrapper">
+                <label class="block text-xs font-semibold text-white/40 uppercase tracking-wider mb-2">Notizen</label>
+                <textarea id="internalNotes" class="modern-input w-full bg-transparent border-none outline-none text-sm text-white resize-none placeholder-white/30" rows="2" placeholder="Z.B. 'Gültig 30 Tage'"></textarea>
+                <button class="input-mic-btn no-print" style="top: 65%;" onclick="startFieldDictation('internalNotes')" title="Sprache">🎤</button>
+            </div>
         </section>
         
     </main>
 
     <!-- ════════════ DRUCK-FORMULAR ════════════ -->
     <div id="printForm">
-        <!-- GESAMT-ANZEIGE OBEN RECHTS -->
         <div class="print-total-box">
             <span class="label">Gesamt Netto</span>
             <span class="value" id="printTotalValue">0,00 €</span>
         </div>
-        
         <div class="form-header">
             <svg viewBox="0 0 200 200" class="logo-small w-12 h-12">
-                <defs><linearGradient id="printGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#0891b2"/><stop offset="100%" stop-color="#7c3aed"/></linearGradient></defs>
-                <path d="M40 150 L100 40 L160 150" fill="none" stroke="url(#printGrad)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M65 110 Q80 90 95 110 T125 110" fill="none" stroke="url(#printGrad)" stroke-width="6" stroke-linecap="round"/>
-                <circle cx="100" cy="110" r="3.5" fill="#0891b2"/>
+                <path d="M40 150 L100 40 L160 150" fill="none" stroke="#000" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M65 110 Q80 90 95 110 T125 110" fill="none" stroke="#000" stroke-width="6" stroke-linecap="round"/>
+                <circle cx="100" cy="110" r="3.5" fill="#000"/>
             </svg>
             <h1>AETHER</h1>
             <div class="sub" id="printOfferInfo">Nr. AETH-2026-001 · Datum: 15.04.2026</div>
         </div>
-        
         <div class="form-info-box">
             <label>Auftraggeber / Kunde</label>
             <div class="value" id="printCustName">_______________________</div>
@@ -292,35 +302,24 @@
             <label>Bauvorhaben / Projekt</label>
             <div class="value" id="printProject">_______________________</div>
         </div>
-        
         <table class="form-table">
             <thead>
-                <tr>
-                    <th style="width:30px;">Pos</th><th>Leistung / Beschreibung</th>
-                    <th style="width:45px;">Menge</th><th style="width:40px;">Einheit</th>
-                    <th style="width:70px;">Preis</th><th style="width:70px;">Gesamt</th>
-                </tr>
+                <tr><th style="width:30px;">Pos</th><th>Leistung / Beschreibung</th><th style="width:45px;">Menge</th><th style="width:40px;">Einheit</th><th style="width:70px;">Preis</th><th style="width:70px;">Gesamt</th></tr>
             </thead>
             <tbody id="printTableBody"></tbody>
         </table>
-        
         <div class="form-totals" id="printTotals">
-            <div>Netto: <strong>0,00 €</strong></div><br>
-            <div>MwSt. (19%): <strong>0,00 €</strong></div><br>
-            <div class="grand-total">Gesamt (Brutto): <strong>0,00 €</strong></div>
+            <div>Netto: <strong>0,00 €</strong></div><br><div>MwSt. (19%): <strong>0,00 €</strong></div><br><div class="grand-total">Gesamt (Brutto): <strong>0,00 €</strong></div>
         </div>
-        
         <div class="form-notes">
             <label>Bemerkungen</label>
             <div id="printNotes" style="font-size:8pt; color:#333;"></div>
         </div>
-        
         <div class="form-signatures">
             <div class="sig-box">Auftraggeber<br><span style="color:#999">(Unterschrift)</span></div>
             <div class="sig-box">Auftragnehmer<br><span style="color:#999">(Stempel)</span></div>
         </div>
-        
-        <div class="form-footer">AETHER Voice Construction OS · Alle Preise zzgl. MwSt.</div>
+        <div class="form-footer">AETHER · Alle Preise zzgl. MwSt.</div>
     </div>
 
     <!-- ════════════ JAVASCRIPT ════════════ -->
@@ -339,19 +338,36 @@
             recognition.lang = 'de-DE'; recognition.continuous = false; recognition.interimResults = false;
             recognition.onstart = () => {
                 isListening = true;
-                const btn = document.getElementById('micBtn');
-                if (btn) { btn.classList.add('listening'); document.getElementById('micIcon').innerText = '⏹'; document.getElementById('micText').innerText = currentField ? 'Höre zu...' : 'Positionen hören...'; }
+                // Update Waveform UI
+                const waveBtn = document.getElementById('waveBtn');
+                const waveText = document.getElementById('waveText');
+                if (waveBtn) { 
+                    waveBtn.classList.add('listening'); 
+                    waveText.innerText = currentField ? 'Höre zu...' : 'Positionen hören...'; 
+                }
+                // Update Field Mic UI
                 if (currentField) { const fbtn = document.querySelector(`button[onclick="startFieldDictation('${currentField}')"]`); if (fbtn) fbtn.classList.add('listening'); }
             };
             recognition.onend = () => {
                 isListening = false; currentField = null;
-                const btn = document.getElementById('micBtn');
-                if (btn) { btn.classList.remove('listening'); document.getElementById('micIcon').innerText = '🎤'; document.getElementById('micText').innerText = 'Positionen diktieren'; }
+                // Reset Waveform UI
+                const waveBtn = document.getElementById('waveBtn');
+                const waveText = document.getElementById('waveText');
+                if (waveBtn) { 
+                    waveBtn.classList.remove('listening'); 
+                    waveText.innerText = 'Tippen zum Sprechen'; 
+                }
+                // Reset Field Mic UI
                 document.querySelectorAll('.input-mic-btn').forEach(b => b.classList.remove('listening'));
             };
             recognition.onresult = (e) => {
                 const t = e.results[0][0].transcript;
-                if (currentField) { document.getElementById(currentField).value = t; autoSave(); }
+                if (currentField) { 
+                    const el = document.getElementById(currentField);
+                    if(el.value.length > 0) el.value += " " + t;
+                    else el.value = t;
+                    autoSave(); 
+                }
                 else parseSmartInput(t);
             };
             recognition.onerror = (e) => {
@@ -424,21 +440,21 @@
                 list.innerHTML = positions.map((p, index) => `
                     <div class="pos-card light-card p-3 rounded-xl">
                         <div class="flex gap-2 items-start">
-                            <span class="text-xs font-bold text-slate-400 mt-2.5 w-5 text-right">${index + 1}.</span>
+                            <span class="text-xs font-bold text-white/40 mt-2.5 w-5 text-right">${index + 1}.</span>
                             <div class="flex-1 min-w-0">
-                                <input type="text" class="modern-input w-full rounded-lg p-2 text-sm font-medium outline-none mb-2" value="${p.desc}" oninput="updatePos(${p.id}, 'desc', this.value)" placeholder="Beschreibung...">
-                                ${p.image ? `<div class="flex items-center gap-2 mb-2"><img src="${p.image}" class="img-preview" alt="Foto"><button onclick="removeImage(${p.id})" class="text-xs text-red-500 hover:underline no-print">✕</button></div>` : ''}
+                                <input type="text" class="modern-input w-full rounded-lg p-2 text-sm font-medium outline-none mb-2" value="${p.desc}" oninput="updatePos(${p.id}, 'desc', this.value)" placeholder="Beschreibung">
+                                ${p.image ? `<div class="flex items-center gap-2 mb-2"><img src="${p.image}" class="img-preview" alt="Foto"><button onclick="removeImage(${p.id})" class="text-xs text-white/60 hover:text-white no-print">✕</button></div>` : ''}
                             </div>
-                            <label class="cursor-pointer bg-slate-100 text-slate-600 p-2 rounded-lg flex items-center justify-center w-10 h-10 no-print hover:bg-slate-200 transition" title="Foto">📷<input type="file" accept="image/*" class="hidden" onchange="handleImageUpload(${p.id}, event)"></label>
-                            <button onclick="removePos(${p.id})" class="text-slate-400 hover:text-red-500 px-2 text-xl transition no-print">×</button>
+                            <label class="cursor-pointer bg-white/10 text-white p-2 rounded-lg flex items-center justify-center w-10 h-10 no-print hover:bg-white/20 transition" title="Foto">📷<input type="file" accept="image/*" class="hidden" onchange="handleImageUpload(${p.id}, event)"></label>
+                            <button onclick="removePos(${p.id})" class="text-white/40 hover:text-white px-2 text-xl transition no-print">×</button>
                         </div>
                         <div class="flex gap-2 items-center pl-7 mt-1">
                             <input type="number" step="0.01" class="w-16 modern-input rounded-lg p-1.5 text-center text-xs outline-none" value="${p.qty}" oninput="updatePos(${p.id}, 'qty', this.value)">
                             <input type="text" class="w-14 modern-input rounded-lg p-1.5 text-center text-xs outline-none uppercase" value="${p.unit}" oninput="updatePos(${p.id}, 'unit', this.value.toUpperCase())">
-                            <span class="text-slate-400 text-xs">×</span>
-                            <input type="number" step="0.01" class="flex-1 modern-input rounded-lg p-1.5 text-right text-xs font-semibold text-cyan-700 outline-none" value="${p.price}" oninput="updatePos(${p.id}, 'price', this.value)">
-                            <span class="text-slate-500 text-xs">€</span>
-                            <span class="text-sm font-bold text-slate-800 min-w-[70px] text-right">${(p.qty * p.price).toLocaleString('de-DE', {minimumFractionDigits: 2})} €</span>
+                            <span class="text-white/40 text-xs">×</span>
+                            <input type="number" step="0.01" class="flex-1 modern-input rounded-lg p-1.5 text-right text-xs font-semibold text-white outline-none" value="${p.price}" oninput="updatePos(${p.id}, 'price', this.value)">
+                            <span class="text-white/40 text-xs">€</span>
+                            <span class="text-sm font-bold text-white min-w-[70px] text-right">${(p.qty * p.price).toLocaleString('de-DE', {minimumFractionDigits: 2})} €</span>
                         </div>
                     </div>`).join('');
             }
@@ -478,10 +494,10 @@
         const origPrint = window.print;
         window.print = function() { preparePrint(); origPrint.call(window); };
 
-        function autoSave() { try { localStorage.setItem('aether_final_v7', JSON.stringify({ cust: document.getElementById('custName').value, addr: document.getElementById('custAddr').value, proj: document.getElementById('projectName').value, notes: document.getElementById('internalNotes').value, pos: positions })); } catch(e) {} }
+        function autoSave() { try { localStorage.setItem('aether_bw_v3', JSON.stringify({ cust: document.getElementById('custName').value, addr: document.getElementById('custAddr').value, proj: document.getElementById('projectName').value, notes: document.getElementById('internalNotes').value, pos: positions })); } catch(e) {} }
         
         window.onload = () => {
-            const saved = localStorage.getItem('aether_final_v7');
+            const saved = localStorage.getItem('aether_bw_v3');
             if(saved) { try { const d = JSON.parse(saved); document.getElementById('custName').value = d.cust || ''; document.getElementById('custAddr').value = d.addr || ''; document.getElementById('projectName').value = d.proj || ''; document.getElementById('internalNotes').value = d.notes || ''; if(d.pos && Array.isArray(d.pos)) positions = d.pos; render(); } catch(e) {} }
         };
         ['custName','custAddr','projectName','internalNotes'].forEach(id => document.getElementById(id).addEventListener('input', autoSave));
